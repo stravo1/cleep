@@ -2,7 +2,7 @@
   <v-ons-page>
     <v-ons-toolbar>
       <div class="center" style="font-weight: bold; font-size: larger">
-        stash
+        cleep
       </div>
       <div class="left">
         <v-ons-toolbar-button

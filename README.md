@@ -1,3 +1,3 @@
-# stash
+# cleep
 
 universal clipboard for all your devices!
