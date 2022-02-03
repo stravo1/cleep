@@ -11,7 +11,7 @@ export default {
       tabs: [
         {
           label: "texts",
-          icon: "ion-ios-document",
+          icon: "ion-ios-text",
           page: Texts,
           
         },

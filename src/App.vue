@@ -5,7 +5,6 @@
     :page-stack="pageStack"
     :pop-page="storePop"
     :options="options"
-    
     :class="{ 'border-radius': borderRadius }"
   ></v-ons-navigator>
 </template>
@@ -15,13 +14,10 @@ import Home from "./views/Home.vue";
 export default {
   beforeCreate() {
     this.$store.commit("navigator/push", Home);
-  },
-  mounted(){
-    /* iOS or Material Themeing */
     this.$ons.disableAutoStyling();
-    this.$ons.platform.select('ios');
-    console.log(108)
+    this.$ons.platform.select('ios') 
   },
+  mounted() {},
   data() {
     return {
       shutUp: 0,
@@ -55,12 +51,6 @@ export default {
   },
 };
 </script>
-
-
-
-  
-
-
 
 <style>
 #app {

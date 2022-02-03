@@ -11,5 +11,163 @@
       </div>
       <div class="right"><slot name="right"></slot></div>
     </v-ons-toolbar>
+    <v-ons-list>
+      <v-ons-list-header>Misc</v-ons-list-header>
+      <ons-list-item>
+        <label class="center" for="switch1"> Dark theme </label>
+        <div class="right">
+          <v-ons-switch
+            input-id="switch1"
+            v-model="dTheme"
+            @change="handleThemeChange"
+          >
+          </v-ons-switch>
+        </div>
+      </ons-list-item>
+
+      <v-ons-list-header>Data Usage</v-ons-list-header>
+      <v-ons-list-item>
+        Refresh texts and files list:
+        <v-ons-row>
+          <v-ons-col width="40px" style="text-align: center; line-height: 31px">
+            <v-ons-icon icon="md-minus"></v-ons-icon>
+          </v-ons-col>
+          <v-ons-col>
+            <v-ons-range
+              v-model="rTime"
+              step="25"
+              style="width: 100%"
+            ></v-ons-range>
+          </v-ons-col>
+          <v-ons-col width="40px" style="text-align: center; line-height: 31px">
+            <v-ons-icon icon="md-plus"></v-ons-icon>
+          </v-ons-col>
+        </v-ons-row>
+        {{
+          [
+            "every 5 seconds",
+            "every 15 seconds",
+            "every 30 seconds",
+            "every 1 minute",
+            "manually",
+          ][[0, 25, 50, 75, 100].indexOf(parseInt(rTime))]
+        }}
+      </v-ons-list-item>
+      <v-ons-list-item>
+        Preview size limit:
+        <v-ons-row>
+          <v-ons-col width="40px" style="text-align: center; line-height: 31px">
+            <v-ons-icon icon="md-minus"></v-ons-icon>
+          </v-ons-col>
+          <v-ons-col>
+            <v-ons-range
+              v-model="sLimit"
+              step="25"
+              style="width: 100%"
+            ></v-ons-range>
+          </v-ons-col>
+          <v-ons-col width="40px" style="text-align: center; line-height: 31px">
+            <v-ons-icon icon="md-plus"></v-ons-icon>
+          </v-ons-col>
+        </v-ons-row>
+        {{
+          ["0.5 mb", "1.0 mb", "5.0 mb", "10.0 mb", "no limit"][
+            [0, 25, 50, 75, 100].indexOf(parseInt(sLimit))
+          ]
+        }}
+      </v-ons-list-item>
+
+      <v-ons-list-header>Housekeeping</v-ons-list-header>
+
+      <v-ons-list-item>
+        Delete old texts after:
+        <v-ons-row>
+          <v-ons-col width="40px" style="text-align: center; line-height: 31px">
+            <v-ons-icon icon="md-minus"></v-ons-icon>
+          </v-ons-col>
+          <v-ons-col>
+            <v-ons-range
+              v-model="textLimit"
+              step="25"
+              style="width: 100%"
+            ></v-ons-range>
+          </v-ons-col>
+          <v-ons-col width="40px" style="text-align: center; line-height: 31px">
+            <v-ons-icon icon="md-plus"></v-ons-icon>
+          </v-ons-col>
+        </v-ons-row>
+        {{
+          ["10 texts", "20 texts", "50 texts", "100 texts", "never"][
+            [0, 25, 50, 75, 100].indexOf(parseInt(textLimit))
+          ]
+        }}
+      </v-ons-list-item>
+      <v-ons-list-item>
+        Delete old files after:
+        <v-ons-row>
+          <v-ons-col width="40px" style="text-align: center; line-height: 31px">
+            <v-ons-icon icon="md-minus"></v-ons-icon>
+          </v-ons-col>
+          <v-ons-col>
+            <v-ons-range
+              v-model="fileLimit"
+              step="25"
+              style="width: 100%"
+            ></v-ons-range>
+          </v-ons-col>
+          <v-ons-col width="40px" style="text-align: center; line-height: 31px">
+            <v-ons-icon icon="md-plus"></v-ons-icon>
+          </v-ons-col>
+        </v-ons-row>
+        {{
+          ["10 files", "20 files", "30 files", "50 files", "never"][
+            [0, 25, 50, 75, 100].indexOf(parseInt(fileLimit))
+          ]
+        }}
+      </v-ons-list-item>
+      <v-ons-list-header>Information</v-ons-list-header>
+      <v-ons-list-item modifier="nodivider">
+        <div class="left">About</div>
+        <div class="right">
+          <v-ons-icon icon="ion-ios-link" />
+        </div>
+      </v-ons-list-item>
+      <v-ons-list-item modifier="nodivider">
+        <div class="left">Guide</div>
+        <div class="right">
+          <v-ons-icon icon="ion-ios-link" />
+        </div>
+      </v-ons-list-item>
+    </v-ons-list>
   </v-ons-page>
 </template>
+
+<script>
+export default {
+  data() {
+    return {
+      name: "",
+      dTheme: true,
+      rTime: 50,
+      sLimit: 25,
+      textLimit: 75,
+      fileLimit: 25,
+    };
+  },
+  mounted() {
+    if (localStorage.getItem("dark") === null) this.dTheme = false;
+    else if (localStorage.getItem("dark") === "true") this.dTheme = true;
+    else this.dTheme = false;
+  },
+  methods: {
+    handleThemeChange() {
+      this.$ons.notification.toast("Reload to apply changes", {
+        timeout: 2000,
+        buttonLabel: "ok!",
+        force: true,
+      });
+      localStorage.setItem("dark", JSON.stringify(!this.dTheme));
+    },
+  },
+};
+</script>

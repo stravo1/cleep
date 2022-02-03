@@ -1,11 +1,27 @@
 <template>
   <v-ons-page>
-    <p>Texts</p>
+    <div id="text_view">
+        <text-list-member />
+    </div>
   </v-ons-page>
 </template>
 
 <script>
+import TextListMember from "../components/TextListMember.vue"
 export default {
-  
+  data(){
+      return{
+
+      }
+  },
+  methods:{
+
+  },
+  computed:{
+
+  },
+  components:{
+      TextListMember
+  }
 };
 </script>
