@@ -11,16 +11,50 @@
 
 <script>
 import Home from "./views/Home.vue";
+import LogIn from "./views/LogIn.vue";
+import { gapi } from "gapi-script";
+
+var CLIENT_ID =
+  "202885509544-6sit8gj5j4abi5kkrh0ija74182bh3e1.apps.googleusercontent.com";
+var DISCOVERY_DOCS = [
+  "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest",
+];
+// accesses only the appData folder
+var SCOPES = "https://www.googleapis.com/auth/drive.appdata";
+
 export default {
   beforeCreate() {
     this.$store.commit("navigator/push", Home);
     this.$ons.disableAutoStyling();
-    this.$ons.platform.select('ios') 
+    this.$ons.platform.select("ios");
   },
-  mounted() {},
+  mounted() {
+    var callback = this.signInStateUpdate;
+    this.$store.commit("setLoading", true);
+    gapi.load("client:auth2", function () {
+      ////console.log(108)
+      gapi.client
+        .init({
+          clientId: CLIENT_ID,
+          discoveryDocs: DISCOVERY_DOCS,
+          scope: SCOPES,
+        })
+        .then(
+          function () {
+            // Listen for sign-in state changes.
+            gapi.auth2.getAuthInstance().isSignedIn.listen(callback);
+            // Handle the initial sign-in state.
+            callback(gapi.auth2.getAuthInstance().isSignedIn.get());
+          },
+          function (error) {
+            window.alert(JSON.stringify(error, null, 2));
+          }
+        );
+    });
+  },
   data() {
     return {
-      shutUp: 0,
+      loginPushed: false,
     };
   },
   computed: {
@@ -38,15 +72,31 @@ export default {
     storePop() {
       this.$store.commit("navigator/pop");
     },
-    showPopTip() {
-      !this.shutUp &&
-        this.$ons.notification
-          .toast({
-            message: "Try swipe-to-pop from left side!",
-            buttonLabel: "Shut up!",
-            timeout: 2000,
-          })
-          .then((i) => (this.shutUp = i === 0));
+    async signInStateUpdate(arg) {
+      ////console.log("Signed In?", arg)
+      this.$store.commit("setLoading", false);
+
+      this.$store.commit("setSignInState", arg);
+      if (!this.$store.state.signInState) {
+        this.$store.commit("navigator/push", LogIn);
+        this.loginPushed = true;
+        return;
+      } else {
+        if (this.loginPushed) {
+          this.$store.commit("navigator/pop");
+          this.loginPushed = false;
+        }
+        this.$store.commit(
+        "setAccessToken",
+        gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse()
+          .access_token
+      );
+        this.$store.dispatch("checkInstall");
+      }
+      
+
+      //level 1 folders
+      //localStorage.setItem('thisDeviceId','1Qo8TQY19PdDd3GPU3wmAmOcw1WByN3lalKkFMHxTwhvCJ-U1ig')
     },
   },
 };

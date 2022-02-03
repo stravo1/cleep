@@ -13,7 +13,7 @@
     </v-ons-toolbar>
     <v-ons-list>
       <v-ons-list-header>Misc</v-ons-list-header>
-      <ons-list-item>
+      <v-ons-list-item>
         <label class="center" for="switch1"> Dark theme </label>
         <div class="right">
           <v-ons-switch
@@ -23,7 +23,13 @@
           >
           </v-ons-switch>
         </div>
-      </ons-list-item>
+      </v-ons-list-item>
+      <v-ons-list-item @click="sOUT">
+        <div class="left">Sign Out</div>
+        <div class="right">
+          <v-ons-icon icon="ion-ios-power" />
+        </div>
+      </v-ons-list-item>
 
       <v-ons-list-header>Data Usage</v-ons-list-header>
       <v-ons-list-item>
@@ -143,6 +149,7 @@
 </template>
 
 <script>
+import { gapi } from "gapi-script";
 export default {
   data() {
     return {
@@ -167,6 +174,9 @@ export default {
         force: true,
       });
       localStorage.setItem("dark", JSON.stringify(!this.dTheme));
+    },
+    sOUT() {
+      gapi.auth2.getAuthInstance().signOut();
     },
   },
 };

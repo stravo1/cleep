@@ -20,6 +20,13 @@
     <br />
 
     <Tabs />
+
+    <v-ons-modal :visible="$store.state.isLoading">
+      <p style="text-align: center">
+        <v-ons-icon icon="fa-spinner" spin></v-ons-icon>
+        {{ $store.state.loadingMessage }}
+      </p>
+    </v-ons-modal>
   </v-ons-page>
 </template>
 
@@ -34,10 +41,11 @@ export default {
   data() {
     return {};
   },
+  mounted() {},
   methods: {
     push(page) {
-      if(page === "add") this.$store.commit("navigator/push", Add);
-      if(page === "settings") this.$store.commit("navigator/push", Settings);
+      if (page === "add") this.$store.commit("navigator/push", Add);
+      if (page === "settings") this.$store.commit("navigator/push", Settings);
     },
   },
   components: { Tabs, Add, Settings },

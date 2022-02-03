@@ -1,5 +1,5 @@
 {
-  "name": "stash",
+  "name": "cleep",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,6 +9,7 @@
   "dependencies": {
     "core-js": "^3.6.5",
     "dompurify": "^2.3.4",
+    "gapi-script": "^1.2.0",
     "linkifyjs": "^3.0.5",
     "onsenui": "^2.11.2",
     "register-service-worker": "^1.7.1",

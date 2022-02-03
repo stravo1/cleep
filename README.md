@@ -1,3 +1,3 @@
 # cleep
 
-universal clipboard for all your devices!!
+universal clipboard for all your devices!
