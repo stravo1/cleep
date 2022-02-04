@@ -25,7 +25,9 @@
       <v-ons-action-sheet-button @click="handleDl"
         >download</v-ons-action-sheet-button
       >
-      <v-ons-action-sheet-button>share</v-ons-action-sheet-button>
+      <v-ons-action-sheet-button @click="share"
+        >share</v-ons-action-sheet-button
+      >
       <v-ons-action-sheet-button
         modifier="destructive"
         style="font-weight: bold"
@@ -40,6 +42,16 @@
 </template>
 
 <script>
+async function share(blob, type, name) {
+  var file = new File([blob], name, { type: type });
+  var filesArray = [file];
+  var shareData = {
+    title: name,
+    files: filesArray,
+    text: "Shared via cleep: " + name,
+  };
+  return shareData;
+}
 export default {
   data() {
     return {
@@ -56,6 +68,19 @@ export default {
     handleDl() {
       this.$store.dispatch("download", this.file);
       this.actionSheetVisible = false;
+    },
+    async share() {
+      this.actionSheetVisible = false;
+      var result;
+      try {
+        var blob = await this.$store.dispatch("getContent", this.file);
+        var shareData = await share(blob, this.file.type, this.file.name);
+        await navigator.share(shareData);
+        result = "MDN shared successfully";
+      } catch (err) {
+        result = "Error: " + err;
+        console.log(result)
+      }
     },
   },
   computed: {
@@ -93,7 +118,7 @@ export default {
   max-width: 57vw;
   white-space: nowrap;
   text-overflow: ellipsis;
-  overflow-y: hidden;
+  overflow: hidden;
 }
 .details {
   position: absolute;
@@ -103,6 +128,6 @@ export default {
   opacity: 0.75;
 }
 .color_fade {
-  color: rgb(90, 90, 90);
+  color: rgb(136, 136, 136);
 }
 </style>

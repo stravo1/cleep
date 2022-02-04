@@ -215,7 +215,8 @@ export default new Vuex.Store({
       });
       state.filesList.splice(state.filesList.indexOf(file), 1);
     },
-    async deleteText({ state }, file) { // redundant code 
+    async deleteText({ state }, file) {
+      // redundant code
       await deleteFile(state.accessToken, file.id);
       state.toast("Deleted!", {
         buttonLabel: "ok",
@@ -224,7 +225,7 @@ export default new Vuex.Store({
       });
       state.textList.splice(state.textList.indexOf(file), 1);
     },
-    
+
     async refresh({ state }) {},
   },
   getters: {
@@ -236,6 +237,7 @@ export default new Vuex.Store({
       if (now.getFullYear() - then.getFullYear() > 0) {
         return (
           JSON.stringify(then.getFullYear()) +
+          ", " +
           new Intl.DateTimeFormat("en-US", { month: "long" }).format(then)
         );
       } else if (now.getMonth() - then.getMonth() > 0) {
@@ -245,7 +247,11 @@ export default new Vuex.Store({
           JSON.stringify(then.getDate())
         );
       } else if (now.getDate() - then.getDate() >= 7) {
-        return +JSON.stringify(then.getDate()) + "th, this month";
+        return (
+          +JSON.stringify(then.getDate()) +
+          "th, " +
+          new Intl.DateTimeFormat("en-US", { month: "long" }).format(then)
+        );
       } else if (
         now.getDay() - then.getDay() == 1 ||
         now.getDay() - then.getDay() == -6
@@ -254,33 +260,12 @@ export default new Vuex.Store({
           "yesterday " +
           new Intl.DateTimeFormat("en-US", { hour: "numeric" }).format(then)
         );
-      } else if (
-        now.getDay() - then.getDay() > 1 ||
-        now.getDay() - then.getDay() <= -1
-      ) {
-        return (
-          new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(then) +
-          " " +
-          new Intl.DateTimeFormat("en-US", { hour: "numeric" }).format(then)
-        );
-      } else if (now.getHours() - then.getHours() > 1) {
-        return JSON.stringify(now.getHours() - then.getHours()) + " hours ago";
-      } else if (
-        now.getHours() - then.getHours() == 1 &&
-        now.getMinutes() - then.getMinutes() > 1
-      ) {
-        return "1 hour ago";
-      } else if (now.getMinutes() - then.getMinutes() > 1) {
-        return (
-          JSON.stringify(now.getMinutes() - then.getMinutes()) + " minutes ago"
-        );
-      } else if (now.getMinutes() - then.getMinutes() < -1) {
-        return (
-          JSON.stringify(60 + (now.getMinutes() - then.getMinutes())) +
-          " minutes ago"
-        );
       } else {
-        return "moments ago";
+        return (
+          JSON.stringify(then.getHours()) +
+          ":" +
+          JSON.stringify(then.getMinutes())
+        );
       }
     },
   },

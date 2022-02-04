@@ -54,7 +54,7 @@ export default {
   max-width: 57vw;
   white-space: nowrap;
   text-overflow: ellipsis;
-  overflow-y: hidden;
+  overflow: hidden;
 }
 .details {
   position: absolute;
@@ -64,6 +64,6 @@ export default {
   opacity: 0.75;
 }
 .color_fade{
-    color: rgb(90, 90, 90);
+    color: rgb(136, 136, 136);
 }
 </style>

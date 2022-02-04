@@ -1,18 +1,16 @@
 <template>
   <div>
     <v-ons-card @click="actionSheetVisible = true" id="123">
-      <div class="title" v-show="loaded">
-        <span :class="{ txt_fadetxt: dlt }">
-          {{ $store.getters.timeFormatter(file.createdTime) }}
-        </span>
-      </div>
       <div class="content">
         <template v-if="loaded"
           ><span
             :class="{ txt_fadetxt: dlt }"
             v-html="checkForLink(text)"
-          ></span
-        ></template>
+          ></span>
+          <div class="info">
+            {{ $store.getters.timeFormatter(file.createdTime) }}
+          </div>
+        </template>
         <template v-else>
           <Skeleton />
           <Skeleton />
@@ -53,8 +51,8 @@ export default {
   methods: {
     dlt_text() {
       this.actionSheetVisible = false;
-      this.dlt = true
-      this.$store.dispatch("deleteText", this.file)
+      this.dlt = true;
+      this.$store.dispatch("deleteText", this.file);
     },
     checkForLink(arg) {
       var x = DOMpurfiy.sanitize(
@@ -67,8 +65,8 @@ export default {
   },
   async mounted() {
     var content = await this.$store.dispatch("getContent", this.file);
-    this.loaded = true
-    content.text().then( text => this.text = text)
+    this.loaded = true;
+    content.text().then((text) => (this.text = text));
     var dg = this.$ons.GestureDetector(document.getElementById("123"));
     dg.on("hold", function (event) {
       alert("longpress");
@@ -88,6 +86,11 @@ export default {
   opacity: 0.25;
 }
 .content {
-  min-height: 3rem;
+  font-size: 1rem !important;
+}
+.info {
+  font-size: small;
+  text-align: end;
+  opacity: 0.5;
 }
 </style>
