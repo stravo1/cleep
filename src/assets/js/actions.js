@@ -164,17 +164,15 @@ const upload = async (accessToken, parent, name, type, blob) => {
 const getFileBlob = async (fileId, accessToken) => {
   var header = new Headers();
   header.append("Authorization", "Bearer " + accessToken);
-  var request = fetch(
+  var response = await fetch(
     "https://www.googleapis.com/drive/v3/files/" + fileId + "?alt=media",
     {
       method: "GET",
       headers: header,
     }
   );
-  request.then((response) => {
-    if (!response.ok) console.error("Error occurred while fetch");
-    else return response.blob();
-  });
+  return response.blob();
+  
 };
 
 const downloadBlob = async (blob, name) => {
@@ -221,8 +219,6 @@ const download = async (accessToken, file) => {
 };
 
 const deleteFile = async (accessToken, fileId) => {
-  var id = arg.id;
-  state.isLoading = true;
   var outResolve;
   var promise = new Promise((resolve, reject) => {
     outResolve = resolve;
@@ -244,7 +240,6 @@ const deleteFile = async (accessToken, fileId) => {
   };
   xhr_dlt.send();
   await promise;
-  state.isLoading = false;
   return true;
 };
-export { searchFiles, createFolder, upload, download, deleteFile };
+export { searchFiles, createFolder, upload, download, getFileBlob, deleteFile };

@@ -6,6 +6,7 @@ import {
   upload,
   download,
   deleteFile,
+  getFileBlob,
 } from "../assets/js/actions";
 Vue.use(Vuex);
 
@@ -98,7 +99,7 @@ export default new Vuex.Store({
           (folder) => folder.name == "files"
         )[0]; // filesFolder
         // if(not skipped) { // skip in case of direct shares
-        dispatch("loadTexts");
+        await dispatch("loadTexts");
         dispatch("loadFiles");
       } else {
         state.isLoading = true;
@@ -133,6 +134,7 @@ export default new Vuex.Store({
       });
       state.isLoading = false;
       state.loadingMessage = "Loading";
+      console.log(state.filesList);
     },
     async loadTexts({ state }) {
       state.isLoading = true;
@@ -145,8 +147,18 @@ export default new Vuex.Store({
       });
       state.isLoading = false;
       state.loadingMessage = "Loading";
+      console.log(state.textList);
     },
     async getContent({ state }, file) {
+      var blob = await getFileBlob(file.id, state.accessToken);
+      return blob;
+    },
+    async download({ state }, file) {
+      state.toast("Downloading, please wait", {
+        buttonLabel: "ok",
+        timeout: 2000,
+        force: true,
+      });
       download(state.accessToken, file);
     },
     async uploadContent({ state }) {
@@ -162,11 +174,10 @@ export default new Vuex.Store({
           textBlob
         );
         state.toast("Text uploaded!", { buttonLabel: "ok", timeout: 1500 });
-        console.log(resp);
-        // addd te new file to the textList
+        state.textList.unshift(resp);
       }
       if (state.uploadFiles.length) {
-        state.uploadFiles.forEach(async(file) => {
+        state.uploadFiles.forEach(async (file) => {
           var fileBlob;
           if (file.category === "file")
             fileBlob = new Blob([file.content], { type: file.type });
@@ -184,18 +195,94 @@ export default new Vuex.Store({
             file.type,
             fileBlob
           );
-          console.log(resp); // add new file to fileList
+          resp.size = file.size;
+          // add new file to fileList
+          state.filesList.unshift(resp);
           state.toast(file.name + " uploaded!", {
             buttonLabel: "ok",
             timeout: 1500,
+            force: true,
           });
         });
       }
     },
-    async deleteFile({ state }, fileId) {
-      deleteFile(state.accessToken, fileId);
+    async deleteFile({ state }, file) {
+      await deleteFile(state.accessToken, file.id);
+      state.toast(file.name + " deleted!", {
+        buttonLabel: "ok",
+        timeout: 1500,
+        force: true,
+      });
+      state.filesList.splice(state.filesList.indexOf(file), 1);
     },
+    async deleteText({ state }, file) { // redundant code 
+      await deleteFile(state.accessToken, file.id);
+      state.toast("Deleted!", {
+        buttonLabel: "ok",
+        timeout: 1500,
+        force: true,
+      });
+      state.textList.splice(state.textList.indexOf(file), 1);
+    },
+    
     async refresh({ state }) {},
+  },
+  getters: {
+    timeFormatter: (state) => (arg) => {
+      if (arg == "just now") return arg;
+      var then = new Date(arg);
+      var now = new Date();
+      //console.log(arg, now.toString(), then.toString());
+      if (now.getFullYear() - then.getFullYear() > 0) {
+        return (
+          JSON.stringify(then.getFullYear()) +
+          new Intl.DateTimeFormat("en-US", { month: "long" }).format(then)
+        );
+      } else if (now.getMonth() - then.getMonth() > 0) {
+        return (
+          new Intl.DateTimeFormat("en-US", { month: "long" }).format(then) +
+          ", " +
+          JSON.stringify(then.getDate())
+        );
+      } else if (now.getDate() - then.getDate() >= 7) {
+        return +JSON.stringify(then.getDate()) + "th, this month";
+      } else if (
+        now.getDay() - then.getDay() == 1 ||
+        now.getDay() - then.getDay() == -6
+      ) {
+        return (
+          "yesterday " +
+          new Intl.DateTimeFormat("en-US", { hour: "numeric" }).format(then)
+        );
+      } else if (
+        now.getDay() - then.getDay() > 1 ||
+        now.getDay() - then.getDay() <= -1
+      ) {
+        return (
+          new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(then) +
+          " " +
+          new Intl.DateTimeFormat("en-US", { hour: "numeric" }).format(then)
+        );
+      } else if (now.getHours() - then.getHours() > 1) {
+        return JSON.stringify(now.getHours() - then.getHours()) + " hours ago";
+      } else if (
+        now.getHours() - then.getHours() == 1 &&
+        now.getMinutes() - then.getMinutes() > 1
+      ) {
+        return "1 hour ago";
+      } else if (now.getMinutes() - then.getMinutes() > 1) {
+        return (
+          JSON.stringify(now.getMinutes() - then.getMinutes()) + " minutes ago"
+        );
+      } else if (now.getMinutes() - then.getMinutes() < -1) {
+        return (
+          JSON.stringify(60 + (now.getMinutes() - then.getMinutes())) +
+          " minutes ago"
+        );
+      } else {
+        return "moments ago";
+      }
+    },
   },
   modules: {
     navigator: {

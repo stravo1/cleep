@@ -1,7 +1,9 @@
 <template>
   <v-ons-page>
     <div id="text_view">
-        <text-list-member />
+      <template v-for="text in $store.state.textList" >
+        <text-list-member :file="text" :key="text.name" />
+      </template>
     </div>
   </v-ons-page>
 </template>
