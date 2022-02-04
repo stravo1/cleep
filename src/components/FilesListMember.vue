@@ -43,6 +43,7 @@
 
 <script>
 async function share(blob, type, name) {
+  console.log(blob, type, name)
   var file = new File([blob], name, { type: type });
   var filesArray = [file];
   var shareData = {
@@ -74,7 +75,7 @@ export default {
       var result;
       try {
         var blob = await this.$store.dispatch("getContent", this.file);
-        var shareData = await share(blob, this.file.type, this.file.name);
+        var shareData = await share(blob, this.file.mimeType, this.file.name);
         await navigator.share(shareData);
         result = "MDN shared successfully";
       } catch (err) {
