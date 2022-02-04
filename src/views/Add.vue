@@ -10,7 +10,7 @@
         <slot>Add</slot>
       </div>
       <div class="right">
-        <v-ons-toolbar-button>
+        <v-ons-toolbar-button @click="upload">
           <v-ons-icon style="font-size: 42px" icon="ion-ios-checkmark" />
         </v-ons-toolbar-button>
       </div>
@@ -26,40 +26,90 @@
       </div>
     </v-ons-card>
     <v-ons-card>
-      <div class="title">files
-        <div class="file_add" :style="{ color : icon_clr }">
-          <v-ons-icon icon="ion-ios-add" />
+      <div class="title">
+        files
+        <div class="file_add" :style="{ color: icon_clr }">
+          <v-ons-icon icon="ion-ios-add" @click="fileSelect" />
         </div>
       </div>
       <div class="content">
-        <span v-if="false" style="font-size:small; opacity:0.5">no files added... </span>
-
-        <add-file-member />
-        <add-file-member />
+        <span v-if="!fileInp.length" style="font-size: small; opacity: 0.5"
+          >no files added...
+        </span>
+        <template v-for="file in fileInp">
+          <add-file-member
+            :key="file.name"
+            :name="file.name"
+            :type="file.type"
+            :size="file.size"
+            @remove="handleRemove(file)"
+          />
+        </template>
       </div>
     </v-ons-card>
+    <input
+      type="file"
+      style="display: none"
+      ref="file"
+      id="file"
+      @change="fileChange"
+      multiple
+    />
   </v-ons-page>
 </template>
 
 <script>
-import AddFileMember from "../components/AddFileMember.vue"
+import AddFileMember from "../components/AddFileMember.vue";
 export default {
   data() {
     return {
       text: "",
-      icon_clr: "#0b7bff"
+      icon_clr: "#0b7bff",
+      fileInp: [],
     };
   },
-  mounted(){
-      if(localStorage.getItem("dark") === "true") this.icon_clr = "#ffa101"
-      else this.icon_clr = "#0b7bff"
+  mounted() {
+    if (localStorage.getItem("dark") === "true") this.icon_clr = "#ffa101";
+    else this.icon_clr = "#0b7bff";
   },
-  computed: {
-    
+  computed: {},
+  methods: {
+    fileChange() {
+      for (var i = 0; i < this.$refs.file.files.length; i++) {
+        var file = this.$refs.file.files[i];
+        this.fileInp.push({
+          category: "file",
+          content: file,
+          name: file.name,
+          size: file.size,
+          type: file.type,
+        });
+      }
+    },
+    fileSelect() {
+      document.getElementById("file").click();
+    },
+    handleRemove(file) {
+      console.log(file);
+      this.fileInp.splice(this.fileInp.indexOf(file), 1);
+    },
+    upload() {
+      if (!this.text && !this.fileInp.length) {
+        this.$ons.notification.toast("Nothing to upload", {
+          buttonLabel: "ok!",
+          timeout: 2000,
+        });
+        return;
+      }
+      this.$store.commit("setUploadText", this.text);
+      this.$store.commit("setUploadFiles", this.fileInp);
+      this.$store.dispatch("uploadContent");
+      this.$store.commit("navigator/pop");
+    },
   },
-  components:{
-    AddFileMember
-  }
+  components: {
+    AddFileMember,
+  },
 };
 </script>
 <style>
@@ -70,11 +120,11 @@ export default {
   max-height: 5rem;
   width: 100% !important;
 }
-.file_add{
+.file_add {
   position: absolute;
   top: -8px;
   right: 0;
   font-size: larger;
-  color: #0b7bff
+  color: #0b7bff;
 }
 </style>

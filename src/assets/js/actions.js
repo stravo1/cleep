@@ -144,7 +144,7 @@ const upload = async (accessToken, parent, name, type, blob) => {
   var metadata = {
     name: name,
     mimeType: type,
-    parents: [parent]
+    parents: [parent],
   };
 
   var file = blob;
@@ -160,4 +160,91 @@ const upload = async (accessToken, parent, name, type, blob) => {
   await promise;
   return response;
 };
-export { searchFiles, createFolder, upload };
+
+const getFileBlob = async (fileId, accessToken) => {
+  var header = new Headers();
+  header.append("Authorization", "Bearer " + accessToken);
+  var request = fetch(
+    "https://www.googleapis.com/drive/v3/files/" + fileId + "?alt=media",
+    {
+      method: "GET",
+      headers: header,
+    }
+  );
+  request.then((response) => {
+    if (!response.ok) console.error("Error occurred while fetch");
+    else return response.blob();
+  });
+};
+
+const downloadBlob = async (blob, name) => {
+  //console.log(blob)
+  var filename = name;
+  var downloadUrl;
+  if (typeof window.navigator.msSaveBlob !== "undefined") {
+    // IE workaround for "HTML7007: One or more blob URLs were revoked by closing the blob for which they were created. These URLs will no longer resolve as the data backing the URL has been freed."
+    window.navigator.msSaveBlob(blob, filename);
+  } else {
+    //console.log('elseee')
+    var URL = window.URL || window.webkitURL;
+    downloadUrl = URL.createObjectURL(blob);
+  }
+  /*
+      var embed = document.createElement('embed')
+      embed.type = response[1]
+      embed.src = downloadUrl
+      embed.height = embed.width = "200px"
+      document.getElementById('holder').appendChild(embed)
+      return downloadUrl
+      */
+  //console.log(110)
+  if (filename) {
+    // use HTML5 a[download] attribute to specify filename
+    var a = document.createElement("a");
+    // safari doesn't support this yet
+    if (typeof a.download === "undefined") {
+      window.location = downloadUrl;
+    } else {
+      //console.log('else2')
+      a.href = downloadUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+    }
+  } else {
+    window.location = downloadUrl;
+  }
+};
+const download = async (accessToken, file) => {
+  var blob = await getFileBlob(file.id, accessToken);
+  downloadBlob(blob, file.name);
+};
+
+const deleteFile = async (accessToken, fileId) => {
+  var id = arg.id;
+  state.isLoading = true;
+  var outResolve;
+  var promise = new Promise((resolve, reject) => {
+    outResolve = resolve;
+  });
+  var xhr_dlt = new XMLHttpRequest();
+  var link = "https://www.googleapis.com/drive/v3/files/" + fileId;
+  xhr_dlt.open("DELETE", link);
+  xhr_dlt.setRequestHeader("Authorization", "Bearer " + accessToken);
+  xhr_dlt.onload = function () {
+    if (this.status == 204) {
+      // 204 = success => No Content
+      console.log("Deleted!");
+    }
+    if (this.status === 404) {
+      console.log("File missing!");
+    }
+    //console.log(this.response, this.status);
+    outResolve();
+  };
+  xhr_dlt.send();
+  await promise;
+  state.isLoading = false;
+  return true;
+};
+export { searchFiles, createFolder, upload, download, deleteFile };

@@ -1,6 +1,12 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import { createFolder, searchFiles, upload } from "../assets/js/actions";
+import {
+  createFolder,
+  searchFiles,
+  upload,
+  download,
+  deleteFile,
+} from "../assets/js/actions";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -16,7 +22,10 @@ export default new Vuex.Store({
     filesFolder: {},
     textsFolder: {},
     textList: [],
+    toast: "",
     selectedFile: "",
+    uploadText: "",
+    uploadFiles: [],
     selectedFolder: { name: "root", id: "appDataFolder" },
   },
   mutations: {
@@ -55,8 +64,15 @@ export default new Vuex.Store({
       state.selectedFolder = state.foldersList.filter(
         (folder) => folder.name == arg
       )[0];
-
-      //console.log(state.selectedFolder.name, "hh", state.previousFolders);
+    },
+    setToast(state, arg) {
+      state.toast = arg;
+    },
+    setUploadText(state, arg) {
+      state.uploadText = arg;
+    },
+    setUploadFiles(state, list) {
+      state.uploadFiles = list;
     },
   },
   actions: {
@@ -130,6 +146,56 @@ export default new Vuex.Store({
       state.isLoading = false;
       state.loadingMessage = "Loading";
     },
+    async getContent({ state }, file) {
+      download(state.accessToken, file);
+    },
+    async uploadContent({ state }) {
+      if (state.uploadText !== "") {
+        // upload text
+        var textBlob = new Blob([state.uploadText], { type: "text/plain" });
+        state.toast("Uploading text...", { buttonLabel: "ok", timeout: 1500 });
+        var resp = await upload(
+          state.accessToken,
+          state.textsFolder.id,
+          JSON.stringify(new Date().getTime()),
+          "text/plain",
+          textBlob
+        );
+        state.toast("Text uploaded!", { buttonLabel: "ok", timeout: 1500 });
+        console.log(resp);
+        // addd te new file to the textList
+      }
+      if (state.uploadFiles.length) {
+        state.uploadFiles.forEach(async(file) => {
+          var fileBlob;
+          if (file.category === "file")
+            fileBlob = new Blob([file.content], { type: file.type });
+          else {
+            fileBlob = await file.content.blob();
+          }
+          state.toast("Uploading " + file.name, {
+            buttonLabel: "ok",
+            timeout: 1500,
+          });
+          var resp = await upload(
+            state.accessToken,
+            state.filesFolder.id,
+            file.name,
+            file.type,
+            fileBlob
+          );
+          console.log(resp); // add new file to fileList
+          state.toast(file.name + " uploaded!", {
+            buttonLabel: "ok",
+            timeout: 1500,
+          });
+        });
+      }
+    },
+    async deleteFile({ state }, fileId) {
+      deleteFile(state.accessToken, fileId);
+    },
+    async refresh({ state }) {},
   },
   modules: {
     navigator: {

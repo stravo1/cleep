@@ -2,16 +2,37 @@
         <v-ons-card style="margin: 1rem 0 0 0">
             <div class="content">
         <div class="icon color_fade">
-          <v-ons-icon style="font-size: 42px" icon="ion-ios-image" />
+          <v-ons-icon style="font-size: 42px" :icon="icon" />
         </div>
-        <div class="name">file name</div>
-        <div class="details">2.85 mb</div>
+        <div class="name">{{ name }}</div>
+        <div class="details">{{ (parseInt(size)/(1000000)).toFixed(2) }} mb</div>
         <div class="dl_icon color_fade">
-          <v-ons-icon icon="ion-ios-close" />
+          <v-ons-icon icon="ion-ios-close" @click="$emit('remove')"/>
         </div>
       </div>
         </v-ons-card>
 </template>
+<script>
+export default {
+  data(){
+    return{
+
+    }
+  },
+  methods:{
+
+  },
+  computed:{
+    icon(){
+      if(this.type.match(new RegExp('audio/*'))) return "ion-ios-musical-notes"
+      else if (this.type.match(new RegExp('video/*'))) return "ion-ios-videocam" 
+      else if (this.type.match(new RegExp('image/*'))) return "ion-ios-image"
+      else return "ion-ios-document" 
+    }
+  },
+  props:['type', "name", "size"]
+}
+</script>
 <style>
 .content {
   position: relative;
@@ -30,6 +51,10 @@
   top: 0px;
   left: 50px;
   font-size: 18px;
+  max-width: 57vw;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow-y: hidden;
 }
 .details {
   position: absolute;

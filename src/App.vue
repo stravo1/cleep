@@ -31,6 +31,7 @@ export default {
   mounted() {
     var callback = this.signInStateUpdate;
     this.$store.commit("setLoading", true);
+    this.$store.commit("setToast", this.$ons.notification.toast);
     gapi.load("client:auth2", function () {
       ////console.log(108)
       gapi.client

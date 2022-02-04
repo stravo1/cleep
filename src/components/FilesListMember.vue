@@ -14,7 +14,7 @@
     </v-ons-card>
 
     <v-ons-action-sheet :visible.sync="actionSheetVisible" cancelable>
-      <v-ons-action-sheet-button>preview</v-ons-action-sheet-button>
+      <v-ons-action-sheet-button>download</v-ons-action-sheet-button>
       <v-ons-action-sheet-button>share</v-ons-action-sheet-button>
       <v-ons-action-sheet-button
         modifier="destructive"
