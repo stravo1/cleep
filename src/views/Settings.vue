@@ -24,17 +24,6 @@
           </v-ons-switch>
         </div>
       </v-ons-list-item>
-      <v-ons-list-item>
-        <label class="center" for="switch1"> Markdown parser </label>
-        <div class="right">
-          <v-ons-switch
-            input-id="switch1"
-            v-model="dTheme"
-            @change="handleThemeChange"
-          >
-          </v-ons-switch>
-        </div>
-      </v-ons-list-item>
       <v-ons-list-item @click="sOUT">
         <div class="left">Sign Out</div>
         <div class="right">

@@ -20,7 +20,7 @@
     </v-ons-card>
 
     <v-ons-action-sheet :visible.sync="actionSheetVisible" cancelable>
-      <v-ons-action-sheet-button>copy</v-ons-action-sheet-button>
+      <v-ons-action-sheet-button @click="copy">copy</v-ons-action-sheet-button>
       <v-ons-action-sheet-button @click="edit">edit</v-ons-action-sheet-button>
       <v-ons-action-sheet-button
         modifier="destructive"
@@ -67,6 +67,10 @@ export default {
     };
   },
   methods: {
+    copy() {
+      this.actionSheetVisible = false;
+      navigator.clipboard.writeText(this.text);
+    },
     handleDlt() {
       this.alertVisible = true;
       this.actionSheetVisible = false;
@@ -107,7 +111,7 @@ export default {
   },
 };
 </script>
-<style>
+<style scope>
 .txt_card {
   position: relative;
 }
