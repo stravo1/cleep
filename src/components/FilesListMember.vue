@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-ons-card>
+    <v-ons-card :class="{ fade_content: dlt }">
       <div class="content">
         <div class="icon color_fade" @click="actionSheetVisible = true">
           <v-ons-icon style="font-size: 42px" :icon="icon" />
@@ -31,19 +31,34 @@
       <v-ons-action-sheet-button
         modifier="destructive"
         style="font-weight: bold"
-        @click="handleDelete"
+        @click="hideNdelete"
         >delete</v-ons-action-sheet-button
       >
       <v-ons-action-sheet-button @click="actionSheetVisible = false"
         >cancel</v-ons-action-sheet-button
       >
     </v-ons-action-sheet>
+    <v-ons-alert-dialog
+      title="Warning!"
+      modifier="footer"
+      :visible.sync="alertVisible"
+    >
+      This can not be undone!
+      <template slot="footer">
+        <v-ons-alert-dialog-button @click="alertVisible = false"
+          >Cancel</v-ons-alert-dialog-button
+        >
+        <v-ons-alert-dialog-button @click="handleDelete"
+          >Ok</v-ons-alert-dialog-button
+        >
+      </template>
+    </v-ons-alert-dialog>
   </div>
 </template>
 
 <script>
 async function share(blob, type, name) {
-  console.log(blob, type, name)
+  console.log(blob, type, name);
   var file = new File([blob], name, { type: type });
   var filesArray = [file];
   var shareData = {
@@ -57,14 +72,20 @@ export default {
   data() {
     return {
       loading: false,
+      alertVisible: false,
+      dlt: false,
       actionSheetVisible: false,
     };
   },
   methods: {
-    handleDelete() {
-      var x = confirm("Are you sure? This can not be undone.");
-      if (x) this.$store.dispatch("deleteFile", this.file);
+    hideNdelete() {
+      this.alertVisible = true;
       this.actionSheetVisible = false;
+    },
+    handleDelete() {
+      this.alertVisible = false;
+      this.dlt = true;
+      this.$store.dispatch("deleteFile", this.file);
     },
     handleDl() {
       this.$store.dispatch("download", this.file);
@@ -80,7 +101,7 @@ export default {
         result = "MDN shared successfully";
       } catch (err) {
         result = "Error: " + err;
-        console.log(result)
+        console.log(result);
       }
     },
   },
@@ -130,5 +151,8 @@ export default {
 }
 .color_fade {
   color: rgb(136, 136, 136);
+}
+.fade_content {
+  opacity: 0.25;
 }
 </style>

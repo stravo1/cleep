@@ -66,11 +66,19 @@ export default {
       text: "",
       icon_clr: "#0b7bff",
       fileInp: [],
+      edit: false,
     };
   },
   mounted() {
     if (localStorage.getItem("dark") === "true") this.icon_clr = "#ffa101";
     else this.icon_clr = "#0b7bff";
+    if (this.$store.state.preAddText != "") {
+      this.text = this.$store.state.preAddText;
+      this.$store.commit("setPreAddText", "");
+    }
+    if (this.$store.state.editFile != null) {
+      this.edit = true;
+    }
   },
   computed: {},
   methods: {
@@ -93,7 +101,7 @@ export default {
       console.log(file);
       this.fileInp.splice(this.fileInp.indexOf(file), 1);
     },
-    upload() {
+    async upload() {
       if (!this.text && !this.fileInp.length) {
         this.$ons.notification.toast("Nothing to upload", {
           buttonLabel: "ok!",
@@ -101,6 +109,15 @@ export default {
         });
         return;
       }
+
+      if (this.edit) {
+        this.$store.dispatch("deleteText", {
+          file: this.$store.state.editFile,
+          toast: false,
+        });
+        this.$store.commit("setEditFile", null);
+      }
+
       this.$store.commit("setUploadText", this.text);
       this.$store.commit("setUploadFiles", this.fileInp);
       this.$store.dispatch("uploadContent");

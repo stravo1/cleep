@@ -27,6 +27,9 @@ export default new Vuex.Store({
     selectedFile: "",
     uploadText: "",
     uploadFiles: [],
+    preAddText: "",
+    preAddFiles: [],
+    editFile: null,
     selectedFolder: { name: "root", id: "appDataFolder" },
   },
   mutations: {
@@ -74,6 +77,15 @@ export default new Vuex.Store({
     },
     setUploadFiles(state, list) {
       state.uploadFiles = list;
+    },
+    setPreAddText(state, arg) {
+      state.preAddText = arg;
+    },
+    setPreAddFiles(state, arg) {
+      state.preAddFiles = arg;
+    },
+    setEditFile(state, arg) {
+      state.editFile = arg;
     },
   },
   actions: {
@@ -123,9 +135,11 @@ export default new Vuex.Store({
         blob
       );
     },
-    async loadFiles({ state }) {
-      state.isLoading = true;
-      state.loadingMessage = "Loading files";
+    async loadFiles({ state }, arg = true) {
+      if (arg) {
+        state.isLoading = true;
+        state.loadingMessage = "Loading files";
+      }
       state.filesList = await searchFiles({
         name: null,
         mType: null,
@@ -136,9 +150,11 @@ export default new Vuex.Store({
       state.loadingMessage = "Loading";
       console.log(state.filesList);
     },
-    async loadTexts({ state }) {
-      state.isLoading = true;
-      state.loadingMessage = "Loading texts";
+    async loadTexts({ state }, arg = true) {
+      if (arg) {
+        state.isLoading = true;
+        state.loadingMessage = "Loading texts";
+      }
       state.textList = await searchFiles({
         name: null,
         mType: null,
@@ -173,6 +189,7 @@ export default new Vuex.Store({
           "text/plain",
           textBlob
         );
+        resp.createdTime = new Date().getTime();
         state.toast("Text uploaded!", { buttonLabel: "ok", timeout: 1500 });
         state.textList.unshift(resp);
       }
@@ -196,12 +213,13 @@ export default new Vuex.Store({
             fileBlob
           );
           resp.size = file.size;
+          resp.createdTime = new Date().getTime();
+          console.log(resp);
           // add new file to fileList
           state.filesList.unshift(resp);
           state.toast(file.name + " uploaded!", {
             buttonLabel: "ok",
             timeout: 1500,
-            force: true,
           });
         });
       }
@@ -211,22 +229,27 @@ export default new Vuex.Store({
       state.toast(file.name + " deleted!", {
         buttonLabel: "ok",
         timeout: 1500,
-        force: true,
       });
       state.filesList.splice(state.filesList.indexOf(file), 1);
     },
-    async deleteText({ state }, file) {
+    async deleteText({ state }, arg) {
       // redundant code
+      var file = arg.file;
+      var toast = arg.toast;
       await deleteFile(state.accessToken, file.id);
-      state.toast("Deleted!", {
-        buttonLabel: "ok",
-        timeout: 1500,
-        force: true,
-      });
+      if (toast)
+        state.toast("Deleted!", {
+          buttonLabel: "ok",
+          timeout: 1500,
+        });
       state.textList.splice(state.textList.indexOf(file), 1);
     },
 
-    async refresh({ state }) {},
+    async refresh({ state, dispatch }) {
+      console.log("refreshing");
+      dispatch("loadTexts", false);
+      dispatch("loadFiles", false);
+    },
   },
   getters: {
     timeFormatter: (state) => (arg) => {

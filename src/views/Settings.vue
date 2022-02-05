@@ -24,6 +24,17 @@
           </v-ons-switch>
         </div>
       </v-ons-list-item>
+      <v-ons-list-item>
+        <label class="center" for="switch1"> Markdown parser </label>
+        <div class="right">
+          <v-ons-switch
+            input-id="switch1"
+            v-model="dTheme"
+            @change="handleThemeChange"
+          >
+          </v-ons-switch>
+        </div>
+      </v-ons-list-item>
       <v-ons-list-item @click="sOUT">
         <div class="left">Sign Out</div>
         <div class="right">
@@ -31,7 +42,7 @@
         </div>
       </v-ons-list-item>
 
-      <v-ons-list-header>Data Usage</v-ons-list-header>
+      <v-ons-list-header>Housekeeping</v-ons-list-header>
       <v-ons-list-item>
         Refresh texts and files list:
         <v-ons-row>
@@ -59,32 +70,6 @@
           ][[0, 25, 50, 75, 100].indexOf(parseInt(rTime))]
         }}
       </v-ons-list-item>
-      <v-ons-list-item>
-        Preview size limit:
-        <v-ons-row>
-          <v-ons-col width="40px" style="text-align: center; line-height: 31px">
-            <v-ons-icon icon="md-minus"></v-ons-icon>
-          </v-ons-col>
-          <v-ons-col>
-            <v-ons-range
-              v-model="sLimit"
-              step="25"
-              style="width: 100%"
-            ></v-ons-range>
-          </v-ons-col>
-          <v-ons-col width="40px" style="text-align: center; line-height: 31px">
-            <v-ons-icon icon="md-plus"></v-ons-icon>
-          </v-ons-col>
-        </v-ons-row>
-        {{
-          ["0.5 mb", "1.0 mb", "5.0 mb", "10.0 mb", "no limit"][
-            [0, 25, 50, 75, 100].indexOf(parseInt(sLimit))
-          ]
-        }}
-      </v-ons-list-item>
-
-      <v-ons-list-header>Housekeeping</v-ons-list-header>
-
       <v-ons-list-item>
         Delete old texts after:
         <v-ons-row>

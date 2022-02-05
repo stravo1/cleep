@@ -93,6 +93,7 @@ export default {
           .access_token
       );
         this.$store.dispatch("checkInstall");
+        setInterval(() => this.$store.dispatch("refresh"), 1000*10)
       }
       
 

@@ -1,12 +1,13 @@
 <template>
   <div>
-    <v-ons-card @click="actionSheetVisible = true" id="123">
+    <v-ons-card
+      :class="{ txt_fadetxt: dlt }"
+      @click="actionSheetVisible = true"
+      id="123"
+    >
       <div class="content">
         <template v-if="loaded"
-          ><span
-            :class="{ txt_fadetxt: dlt }"
-            v-html="checkForLink(text)"
-          ></span>
+          ><span v-html="checkForLink(text)"></span>
           <div class="info">
             {{ $store.getters.timeFormatter(file.createdTime) }}
           </div>
@@ -20,21 +21,37 @@
 
     <v-ons-action-sheet :visible.sync="actionSheetVisible" cancelable>
       <v-ons-action-sheet-button>copy</v-ons-action-sheet-button>
-      <v-ons-action-sheet-button>edit</v-ons-action-sheet-button>
+      <v-ons-action-sheet-button @click="edit">edit</v-ons-action-sheet-button>
       <v-ons-action-sheet-button
         modifier="destructive"
         style="font-weight: bold"
-        @click="dlt_text"
+        @click="handleDlt"
         >delete</v-ons-action-sheet-button
       >
       <v-ons-action-sheet-button @click="actionSheetVisible = false"
         >cancel</v-ons-action-sheet-button
       >
     </v-ons-action-sheet>
+    <v-ons-alert-dialog
+      title="Warning!"
+      modifier="footer"
+      :visible.sync="alertVisible"
+    >
+      This can not be undone!
+      <template slot="footer">
+        <v-ons-alert-dialog-button @click="alertVisible = false"
+          >Cancel</v-ons-alert-dialog-button
+        >
+        <v-ons-alert-dialog-button @click="dlt_text"
+          >Ok</v-ons-alert-dialog-button
+        >
+      </template>
+    </v-ons-alert-dialog>
   </div>
 </template>
 
 <script>
+import Add from "../views/Add.vue";
 import linkifyHTMl from "linkifyjs/html";
 import DOMpurfiy from "dompurify";
 import { Skeleton } from "vue-loading-skeleton";
@@ -43,16 +60,21 @@ export default {
   data() {
     return {
       actionSheetVisible: false,
+      alertVisible: false,
       loaded: false,
       dlt: false,
       text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed lobortis nisl sed ante facilisis, google.com Fusce vel tincidunt felis. Aenean malesuada tristique est, quis facilisis nisl fermentum sed. Nam vel ipsum gravida sem varius mattis id vitae nulla. Class aptent taciti sociosqu ad litora torquent per conubia.",
     };
   },
   methods: {
-    dlt_text() {
+    handleDlt() {
+      this.alertVisible = true;
       this.actionSheetVisible = false;
+    },
+    dlt_text() {
+      this.alertVisible = false;
       this.dlt = true;
-      this.$store.dispatch("deleteText", this.file);
+      this.$store.dispatch("deleteText", { file: this.file, toast: true });
     },
     checkForLink(arg) {
       var x = DOMpurfiy.sanitize(
@@ -61,6 +83,13 @@ export default {
         })
       );
       return x;
+    },
+    edit() {
+      this.actionSheetVisible = false;
+      this.$store.commit("setPreAddText", this.text);
+      this.$store.commit("setEditFile", this.file);
+      this.$store.commit("navigator/push", Add);
+      this.$store.commit("setEditFile", this.file);
     },
   },
   async mounted() {
