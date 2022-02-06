@@ -123,6 +123,8 @@ export default new Vuex.Store({
         await dispatch("installApp");
         state.loadingMessage = "Loading";
         state.isLoading = false;
+
+        window.location.reload()
       }
     },
     async installApp({ state }) {
@@ -152,7 +154,7 @@ export default new Vuex.Store({
       });
       state.isLoading = false;
       state.loadingMessage = "Loading";
-      console.log(state.filesList);
+      //console.log(state.filesList);
     },
     async loadTexts({ state }, arg = true) {
       if (arg) {
@@ -167,7 +169,7 @@ export default new Vuex.Store({
       });
       state.isLoading = false;
       state.loadingMessage = "Loading";
-      console.log(state.textList);
+      //console.log(state.textList);
     },
     async getContent({ state }, file) {
       var blob = await getFileBlob(file.id, state.accessToken);

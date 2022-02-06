@@ -11,6 +11,7 @@
 
 <script>
 import Home from "./views/Home.vue";
+import Add from "./views/Add.vue";
 import LogIn from "./views/LogIn.vue";
 import { gapi } from "gapi-script";
 
@@ -23,10 +24,24 @@ var DISCOVERY_DOCS = [
 var SCOPES = "https://www.googleapis.com/auth/drive.appdata";
 
 export default {
+  data() {
+    return {
+      trigger: false,
+    };
+  },
   beforeCreate() {
     this.$store.commit("navigator/push", Home);
     this.$ons.disableAutoStyling();
     this.$ons.platform.select("ios");
+
+    navigator.serviceWorker.ready.then((registration) => {
+      // At this point, a Service Worker is controlling the current page
+      console.log("Service worker registered!");
+    });
+    navigator.serviceWorker.onmessage = function (evt) {
+      const message = evt.data;
+      console.log(message + " from service-worker!");
+    };
   },
   mounted() {
     var callback = this.signInStateUpdate;
@@ -94,6 +109,7 @@ export default {
             .access_token
         );
         this.$store.dispatch("checkInstall");
+        this.checkShare();
         if (localStorage.getItem("time") == null) {
           localStorage.setItem("time", JSON.stringify(30));
         }
@@ -104,6 +120,21 @@ export default {
 
       //level 1 folders
       //localStorage.setItem('thisDeviceId','1Qo8TQY19PdDd3GPU3wmAmOcw1WByN3lalKkFMHxTwhvCJ-U1ig')
+    },
+    async checkShare() {
+      var lst = [];
+      const trigger = await caches.open("trigger");
+
+      trigger.keys().then((requests) => {
+        requests.forEach((member) => {
+          lst.push(member);
+          trigger.delete(member);
+        });
+        //console.log(lst);
+        if (lst.length) {
+          this.$store.commit("navigator/push", Add);
+        }
+      });
     },
   },
 };

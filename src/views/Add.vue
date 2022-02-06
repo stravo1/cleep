@@ -79,6 +79,30 @@ export default {
     if (this.$store.state.editFile != null) {
       this.edit = true;
     }
+
+    caches.open("add").then((cache) => {
+      cache.keys().then((requests) => {
+        requests.forEach(async (request) => {
+          //console.log(response.url);
+          //this.cache_items.push(member.url);
+          var response = await cache.match(request);
+          //console.log(response.url);
+          if (response.headers.get("content-type") == "text/plain") {
+            response.text().then((txt) => this.text = txt);
+            cache.delete(request);
+          } else {
+            this.fileInp.push({
+              category: "cache",
+              content: response,
+              name: request.url.slice(26),
+              size: response.headers.get("content-length"),
+              type: response.headers.get("content-type"),
+            });
+            cache.delete(request);
+          }
+        });
+      });
+    });
   },
   computed: {},
   methods: {
@@ -98,6 +122,7 @@ export default {
       document.getElementById("file").click();
     },
     handleRemove(file) {
+      console.log(108);
       console.log(file);
       this.fileInp.splice(this.fileInp.indexOf(file), 1);
     },
