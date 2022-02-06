@@ -9,7 +9,7 @@
           {{ file.name }}
         </div>
         <div class="details" @click="actionSheetVisible = true">
-          {{ (parseInt(file.size) / 100000).toFixed(2) }} mb -
+          {{ (parseInt(file.size) / 1000000).toFixed(2) }} mb •
           {{ $store.getters.timeFormatter(file.createdTime) }}
         </div>
         <div
@@ -136,8 +136,8 @@ export default {
   position: absolute;
   top: 0px;
   left: 50px;
-  font-size: 18px;
-  max-width: 57vw;
+  font-size: 16px;
+  max-width: 60vw;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -147,7 +147,7 @@ export default {
   top: 26px;
   left: 50px;
   font-size: smaller;
-  opacity: 0.75;
+  opacity: 0.5;
 }
 .color_fade {
   color: rgb(136, 136, 136);

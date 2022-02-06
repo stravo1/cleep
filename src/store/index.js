@@ -285,9 +285,10 @@ export default new Vuex.Store({
         );
       } else {
         return (
-          JSON.stringify(then.getHours()) +
+          (JSON.stringify(then.getHours()).length === 2 ? JSON.stringify(then.getHours()) : "0" + JSON.stringify(then.getHours())) +
           ":" +
-          JSON.stringify(then.getMinutes())
+          (JSON.stringify(then.getMinutes()).length === 2 ? JSON.stringify(then.getMinutes()) : "0" + JSON.stringify(then.getMinutes()))
+          
         );
       }
     },
