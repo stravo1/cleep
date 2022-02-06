@@ -43,6 +43,7 @@
               v-model="rTime"
               step="25"
               style="width: 100%"
+              @change="handleRefreshChange"
             ></v-ons-range>
           </v-ons-col>
           <v-ons-col width="40px" style="text-align: center; line-height: 31px">
@@ -139,6 +140,10 @@ export default {
     if (localStorage.getItem("dark") === null) this.dTheme = false;
     else if (localStorage.getItem("dark") === "true") this.dTheme = true;
     else this.dTheme = false;
+
+    this.rTime = [0, 25, 50, 75, 100][
+      [5, 15, 30, 60, 60 * 30].indexOf(parseInt(this.$store.state.refreshTime))
+    ];
   },
   methods: {
     handleThemeChange() {
@@ -148,6 +153,13 @@ export default {
         force: true,
       });
       localStorage.setItem("dark", JSON.stringify(!this.dTheme));
+    },
+    handleRefreshChange() {
+      var time = [5, 15, 30, 60, 60 * 30][
+        [0, 25, 50, 75, 100].indexOf(parseInt(this.rTime))
+      ];
+      this.$store.commit("setRefreshTime", time);
+      localStorage.setItem("time", JSON.stringify(time));
     },
     sOUT() {
       gapi.auth2.getAuthInstance().signOut();

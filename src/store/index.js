@@ -16,6 +16,7 @@ export default new Vuex.Store({
     isLoading: false,
     loadingMessage: "Loading",
     refreshState: false,
+    refreshTime: 60 * 30,
     accessToken: "",
     installedFile: {},
     filesList: [],
@@ -86,6 +87,9 @@ export default new Vuex.Store({
     },
     setEditFile(state, arg) {
       state.editFile = arg;
+    },
+    setRefreshTime(state, arg) {
+      state.refreshTime = arg;
     },
   },
   actions: {
@@ -285,10 +289,13 @@ export default new Vuex.Store({
         );
       } else {
         return (
-          (JSON.stringify(then.getHours()).length === 2 ? JSON.stringify(then.getHours()) : "0" + JSON.stringify(then.getHours())) +
+          (JSON.stringify(then.getHours()).length === 2
+            ? JSON.stringify(then.getHours())
+            : "0" + JSON.stringify(then.getHours())) +
           ":" +
-          (JSON.stringify(then.getMinutes()).length === 2 ? JSON.stringify(then.getMinutes()) : "0" + JSON.stringify(then.getMinutes()))
-          
+          (JSON.stringify(then.getMinutes()).length === 2
+            ? JSON.stringify(then.getMinutes())
+            : "0" + JSON.stringify(then.getMinutes()))
         );
       }
     },

@@ -82,20 +82,25 @@ export default {
         this.$store.commit("navigator/push", LogIn);
         this.loginPushed = true;
         return;
+        // clear intervals
       } else {
         if (this.loginPushed) {
           this.$store.commit("navigator/pop");
           this.loginPushed = false;
         }
         this.$store.commit(
-        "setAccessToken",
-        gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse()
-          .access_token
-      );
+          "setAccessToken",
+          gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse()
+            .access_token
+        );
         this.$store.dispatch("checkInstall");
-        setInterval(() => this.$store.dispatch("refresh"), 1000*10)
+        if (localStorage.getItem("time") == null) {
+          localStorage.setItem("time", JSON.stringify(30));
+        }
+        var time = parseInt(localStorage.getItem("time"));
+        this.$store.commit("setRefreshTime", time);
+        setInterval(() => this.$store.dispatch("refresh"), time * 1000);
       }
-      
 
       //level 1 folders
       //localStorage.setItem('thisDeviceId','1Qo8TQY19PdDd3GPU3wmAmOcw1WByN3lalKkFMHxTwhvCJ-U1ig')
