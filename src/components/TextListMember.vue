@@ -63,7 +63,7 @@ export default {
       alertVisible: false,
       loaded: false,
       dlt: false,
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed lobortis nisl sed ante facilisis, google.com Fusce vel tincidunt felis. Aenean malesuada tristique est, quis facilisis nisl fermentum sed. Nam vel ipsum gravida sem varius mattis id vitae nulla. Class aptent taciti sociosqu ad litora torquent per conubia.",
+      text: "",
     };
   },
   methods: {

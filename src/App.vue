@@ -71,6 +71,7 @@ export default {
   data() {
     return {
       loginPushed: false,
+      isShare: false,
     };
   },
   computed: {
@@ -108,8 +109,11 @@ export default {
           gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse()
             .access_token
         );
-        this.$store.dispatch("checkInstall");
-        this.checkShare();
+
+        await this.checkShare();
+        await this.$store.dispatch("checkInstall");
+        if (this.isShare) this.$store.commit("navigator/push", Add);
+
         if (localStorage.getItem("time") == null) {
           localStorage.setItem("time", JSON.stringify(30));
         }
@@ -130,11 +134,15 @@ export default {
           lst.push(member);
           trigger.delete(member);
         });
-        //console.log(lst);
-        if (lst.length) {
-          this.$store.commit("navigator/push", Add);
-        }
+       if (lst.length) {
+        this.isShare = true
+        this.$store.commit("setIsShare", true)
+        
+      }
       });
+      
+      
+      
     },
   },
 };

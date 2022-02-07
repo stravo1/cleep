@@ -1,7 +1,12 @@
 <template>
   <v-ons-page>
     <div id="file_view">
-      <template v-for="file in $store.state.filesList" >
+      <img
+        src="../assets/svg/kitty.svg"
+        class="image"
+        v-if="!$store.state.filesList.length"
+      />
+      <template v-for="file in $store.state.filesList">
         <file-list-member :file="file" :key="file.name" />
       </template>
     </div>
@@ -21,3 +26,9 @@ export default {
   },
 };
 </script>
+
+<style>
+.image {
+  width: 100vw;
+}
+</style>

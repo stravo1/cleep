@@ -31,6 +31,7 @@ export default new Vuex.Store({
     preAddText: "",
     preAddFiles: [],
     editFile: null,
+    isShare: false,
     selectedFolder: { name: "root", id: "appDataFolder" },
   },
   mutations: {
@@ -91,6 +92,9 @@ export default new Vuex.Store({
     setRefreshTime(state, arg) {
       state.refreshTime = arg;
     },
+    setIsShare(state, arg) {
+      state.isShare = arg;
+    },
   },
   actions: {
     async checkInstall({ state, dispatch }) {
@@ -114,9 +118,11 @@ export default new Vuex.Store({
         state.filesFolder = state.foldersList.filter(
           (folder) => folder.name == "files"
         )[0]; // filesFolder
-        // if(not skipped) { // skip in case of direct shares
-        await dispatch("loadTexts");
-        dispatch("loadFiles");
+        if (!state.isShare) {
+          // skip in case of direct shares
+          await dispatch("loadTexts");
+          dispatch("loadFiles");
+        }
       } else {
         state.isLoading = true;
         state.loadingMessage = "Initializing your app";
@@ -124,8 +130,9 @@ export default new Vuex.Store({
         state.loadingMessage = "Loading";
         state.isLoading = false;
 
-        window.location.reload()
+        window.location.reload();
       }
+      return true;
     },
     async installApp({ state }) {
       await createFolder(state.accessToken, "texts", state.selectedFolder.id);
