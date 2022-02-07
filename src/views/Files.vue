@@ -6,6 +6,9 @@
         class="image"
         v-if="!$store.state.filesList.length"
       />
+      <h1 style="text-align: center" v-if="!$store.state.filesList.length">
+        No files yet...
+      </h1>
       <template v-for="file in $store.state.filesList">
         <file-list-member :file="file" :key="file.name" />
       </template>
@@ -29,6 +32,6 @@ export default {
 
 <style>
 .image {
-  width: 100vw;
+  width: 90vw;
 }
 </style>

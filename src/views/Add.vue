@@ -104,6 +104,7 @@ export default {
         });
       });
     }
+    this.$store.dispatch("refresh");
   },
   computed: {},
   methods: {
