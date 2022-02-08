@@ -147,11 +147,7 @@ export default {
   },
   methods: {
     handleThemeChange() {
-      this.$ons.notification.toast("Reload to apply changes", {
-        timeout: 2000,
-        buttonLabel: "ok!",
-        force: true,
-      });
+      this.$ons.notification.alert("Reload to apply changes");
       localStorage.setItem("dark", JSON.stringify(!this.dTheme));
     },
     handleRefreshChange() {
