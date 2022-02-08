@@ -105,6 +105,7 @@ export default {
       });
     }
     this.$store.dispatch("refresh");
+    this.$store.commit("setHasLoaded", true)
   },
   computed: {},
   methods: {

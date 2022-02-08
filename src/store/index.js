@@ -96,6 +96,9 @@ export default new Vuex.Store({
     setIsShare(state, arg) {
       state.isShare = arg;
     },
+    setHasLoaded(state, arg) {
+      state.hasLoaded = arg;
+    },
   },
   actions: {
     async checkInstall({ state, dispatch }) {
