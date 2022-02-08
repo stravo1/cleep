@@ -14,6 +14,7 @@ export default new Vuex.Store({
   state: {
     signInState: false,
     isLoading: false,
+    hasLoaded: false,
     loadingMessage: "Loading",
     refreshState: false,
     refreshTime: 60 * 30,
@@ -122,6 +123,7 @@ export default new Vuex.Store({
           // skip in case of direct shares
           await dispatch("loadTexts");
           dispatch("loadFiles");
+          state.hasLoaded = true;
         }
       } else {
         state.isLoading = true;
@@ -151,7 +153,7 @@ export default new Vuex.Store({
     async loadFiles({ state }, arg = true) {
       if (arg) {
         state.isLoading = true;
-        state.loadingMessage = "Loading files";
+        state.loadingMessage = "Loading entires";
       }
       state.filesList = await searchFiles({
         name: null,
@@ -166,7 +168,7 @@ export default new Vuex.Store({
     async loadTexts({ state }, arg = true) {
       if (arg) {
         state.isLoading = true;
-        state.loadingMessage = "Loading texts";
+        state.loadingMessage = "Loading entires";
       }
       state.textList = await searchFiles({
         name: null,

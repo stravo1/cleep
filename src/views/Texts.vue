@@ -1,6 +1,6 @@
 <template>
   <v-ons-page>
-    <div id="text_view">
+    <div id="text_view"  v-show="$store.state.hasLoaded">
       <img src="../assets/svg/kitty.svg" class="image" v-if="!$store.state.textList.length"/>
       <h1 style="text-align: center" v-if="!$store.state.textList.length">
         No texts yet...

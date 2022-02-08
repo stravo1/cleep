@@ -1,6 +1,6 @@
 <template>
   <v-ons-page>
-    <div id="file_view">
+    <div id="file_view" v-show="$store.state.hasLoaded">
       <img
         src="../assets/svg/kitty.svg"
         class="image"
