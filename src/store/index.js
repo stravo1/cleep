@@ -20,6 +20,7 @@ export default new Vuex.Store({
     refreshTime: 60 * 30,
     accessToken: "",
     installedFile: {},
+    settingsFile: {},
     filesList: [],
     foldersList: [],
     filesFolder: {},
@@ -112,6 +113,9 @@ export default new Vuex.Store({
       state.isLoading = false;
 
       var installed = initialFiles.filter((file) => file.name === "installed");
+      state.settingsFile = initialFiles.filter(
+        (file) => file.name === "settings"
+      )[0];
       if (installed.length) {
         state.foldersList = initialFiles.filter(
           (file) => file.mimeType === "application/vnd.google-apps.folder"
@@ -126,6 +130,7 @@ export default new Vuex.Store({
           // skip in case of direct shares
           await dispatch("loadTexts");
           dispatch("loadFiles");
+          dispatch("syncSettings");
           state.hasLoaded = true;
         }
       } else {
@@ -139,7 +144,7 @@ export default new Vuex.Store({
       }
       return true;
     },
-    async installApp({ state }) {
+    async installApp({ state, dispatch }) {
       await createFolder(state.accessToken, "texts", state.selectedFolder.id);
       await createFolder(state.accessToken, "files", state.selectedFolder.id);
       var blob = new Blob([JSON.stringify(new Date().getTime())], {
@@ -152,6 +157,17 @@ export default new Vuex.Store({
         "text/plain",
         blob
       );
+      var settingsBlob = new Blob(
+        [
+          JSON.stringify({
+            rTime: "30",
+            txtLmt: "50",
+            fileLmt: "20",
+          }),
+        ],
+        { type: "application/json" }
+      );
+      await dispatch("uploadSettings", settingsBlob);
     },
     async loadFiles({ state }, arg = true) {
       if (arg) {
@@ -370,6 +386,51 @@ export default new Vuex.Store({
       mutations: {
         set(state, index) {
           state.index = index;
+        },
+      },
+    },
+    settings: {
+      state: {
+        rTime: 25,
+        txtLmt: 50,
+        fileLmt: 50,
+      },
+      mutations: {
+        setRTime(state, arg) {
+          state.rTime = arg;
+        },
+        setTxtLmt(state, arg) {
+          state.txtLmt = arg;
+        },
+        setFileLmt(state, arg) {
+          state.fileLmt = arg;
+        },
+      },
+      actions: {
+        async syncSettings({ state, dispatch, rootState }) {
+          var blob = await dispatch("getContent", rootState.settingsFile);
+          var txt = await blob.text();
+          var resp = JSON.parse(txt);
+
+          // can be optimized:
+          state.rTime = parseInt(resp.rTime);
+          state.txtLmt = parseInt(resp.txtLmt);
+          state.fileLmt = parseInt(resp.fileLmt);
+        },
+        async uploadSettings({ state, dispatch, rootState }, blob) {
+          if (rootState.settingsFile != {})
+            await deleteFile(rootState.accessToken, rootState.settingsFile.id);
+          rootState.settingsFile = await upload(
+            rootState.accessToken,
+            "appDataFolder",
+            "settings",
+            "application/json",
+            blob
+          );
+          rootState.toast("Settings synced!", {
+            buttonLabel: "ok",
+            timeout: 1500,
+          });
         },
       },
     },

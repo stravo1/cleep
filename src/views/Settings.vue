@@ -3,7 +3,7 @@
     <v-ons-toolbar>
       <div class="left">
         <slot name="left">
-          <v-ons-back-button />
+          <v-ons-back-button @click="handleBackClick" />
         </slot>
       </div>
       <div class="center">
@@ -130,13 +130,10 @@ export default {
     return {
       name: "",
       dTheme: true,
-      rTime: 50,
-      sLimit: 25,
-      textLimit: 75,
-      fileLimit: 25,
     };
   },
   mounted() {
+    this.$store.dispatch("syncSettings");
     if (localStorage.getItem("dark") === null) this.dTheme = false;
     else if (localStorage.getItem("dark") === "true") this.dTheme = true;
     else this.dTheme = false;
@@ -159,6 +156,46 @@ export default {
     },
     sOUT() {
       gapi.auth2.getAuthInstance().signOut();
+    },
+
+    handleBackClick() {
+      var json = {
+        rTime: this.rTime,
+        txtLmt: this.textLimit,
+        fileLmt: this.fileLimit,
+      };
+      var settingsBlob = new Blob([JSON.stringify(json)], {
+        type: "application/json",
+      });
+
+      this.$store.dispatch("uploadSettings", settingsBlob);
+      this.$store.commit("navigator/pop");
+    },
+  },
+  computed: {
+    fileLimit: {
+      get() {
+        return this.$store.state.settings.fileLmt;
+      },
+      set(value) {
+        this.$store.commit("setFileLmt", parseInt(value));
+      },
+    },
+    textLimit: {
+      get() {
+        return this.$store.state.settings.txtLmt;
+      },
+      set(value) {
+        this.$store.commit("setTxtLmt", parseInt(value));
+      },
+    },
+    rTime: {
+      get() {
+        return this.$store.state.settings.rTime;
+      },
+      set(value) {
+        this.$store.commit("setRTime", parseInt(value));
+      },
     },
   },
 };
