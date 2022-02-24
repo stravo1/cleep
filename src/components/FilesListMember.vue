@@ -85,7 +85,7 @@ export default {
     handleDelete() {
       this.alertVisible = false;
       this.dlt = true;
-      this.$store.dispatch("deleteFile", this.file);
+      this.$store.dispatch("deleteFile", {file: this.file, toast: true});
     },
     handleDl() {
       this.$store.dispatch("download", this.file);

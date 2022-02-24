@@ -128,7 +128,6 @@ import { gapi } from "gapi-script";
 export default {
   data() {
     return {
-      name: "",
       dTheme: true,
     };
   },

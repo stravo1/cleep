@@ -258,12 +258,16 @@ export default new Vuex.Store({
         });
       }
     },
-    async deleteFile({ state }, file) {
+    async deleteFile({ state }, arg) {
+      var file = arg.file;
+      var toast = arg.toast;
       await deleteFile(state.accessToken, file.id);
-      state.toast(file.name + " deleted!", {
-        buttonLabel: "ok",
-        timeout: 1500,
-      });
+      if (toast) {
+        state.toast(file.name + " deleted!", {
+          buttonLabel: "ok",
+          timeout: 1500,
+        });
+      }
       state.filesList.splice(state.filesList.indexOf(file), 1);
     },
     async deleteText({ state }, arg) {
@@ -271,11 +275,12 @@ export default new Vuex.Store({
       var file = arg.file;
       var toast = arg.toast;
       await deleteFile(state.accessToken, file.id);
-      if (toast)
+      if (toast) {
         state.toast("Deleted!", {
           buttonLabel: "ok",
           timeout: 1500,
         });
+      }
       state.textList.splice(state.textList.indexOf(file), 1);
     },
 
@@ -284,6 +289,7 @@ export default new Vuex.Store({
       dispatch("loadTexts", false);
       dispatch("loadFiles", false);
     },
+    async housekeep({ state, dispatch }) {},
   },
   getters: {
     timeFormatter: (state) => (arg) => {
