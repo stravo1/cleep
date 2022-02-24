@@ -226,6 +226,7 @@ export default new Vuex.Store({
         resp.createdTime = new Date().getTime();
         state.toast("Text uploaded!", { buttonLabel: "ok", timeout: 1500 });
         state.textList.unshift(resp);
+        dispatch("housekeep");
       }
       if (state.uploadFiles.length) {
         state.uploadFiles.forEach(async (file) => {
@@ -255,9 +256,10 @@ export default new Vuex.Store({
             buttonLabel: "ok",
             timeout: 1500,
           });
+          dispatch("housekeep");
         });
       }
-      dispatch("housekeep");
+      
     },
     async deleteFile({ state }, arg) {
       var file = arg.file;
@@ -290,6 +292,7 @@ export default new Vuex.Store({
       dispatch("loadFiles", false);
     },
     async housekeep({ state, dispatch }) {
+      console.log("hh")
       var tempTextList = [...state.textList]; // not directly changing the state
       var tempFilesList = [...state.filesList];
       var realTextLimit =
