@@ -155,7 +155,7 @@ export default {
 
       if (this.$store.state.isShare) {
         this.$store.dispatch("refresh");
-        this.$store.dispatch("syncSettings");
+        await this.$store.dispatch("syncSettings");
         this.$store.dispatch("housekeep");
         this.$store.commit("setIsShare", false);
       }
