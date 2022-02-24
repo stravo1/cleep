@@ -70,7 +70,7 @@ export default {
       edit: false,
     };
   },
-  mounted() {
+  async mounted() {
     if (localStorage.getItem("dark") === "true") this.icon_clr = "#ffa101";
     else this.icon_clr = "#0b7bff";
     if (this.$store.state.preAddText != "") {
