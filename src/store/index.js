@@ -459,6 +459,10 @@ export default new Vuex.Store({
             "application/json",
             blob
           );
+          rootState.toast("Settings synced!", {
+            buttonLabel: "ok",
+            timeout: 1500,
+          });
         },
       },
     },
