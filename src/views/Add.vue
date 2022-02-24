@@ -22,6 +22,7 @@
           placeholder="type text here..."
           rows="5"
           v-model="text"
+          id="text_inp"
         ></textarea>
       </div>
     </v-ons-card>
@@ -104,6 +105,7 @@ export default {
         });
       });
     }
+    document.getElementById("text_inp").focus()
     this.$store.dispatch("refresh");
     this.$store.commit("setHasLoaded", true)
   },

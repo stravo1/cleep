@@ -168,6 +168,7 @@ export default {
       });
 
       this.$store.dispatch("uploadSettings", settingsBlob);
+      this.$store.dispatch("housekeep");
       this.$store.commit("navigator/pop");
     },
   },

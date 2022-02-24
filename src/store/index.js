@@ -211,7 +211,7 @@ export default new Vuex.Store({
       });
       download(state.accessToken, file);
     },
-    async uploadContent({ state }) {
+    async uploadContent({ state, dispatch }) {
       if (state.uploadText !== "") {
         // upload text
         var textBlob = new Blob([state.uploadText], { type: "text/plain" });
@@ -257,6 +257,7 @@ export default new Vuex.Store({
           });
         });
       }
+      dispatch("housekeep");
     },
     async deleteFile({ state }, arg) {
       var file = arg.file;
@@ -283,13 +284,38 @@ export default new Vuex.Store({
       }
       state.textList.splice(state.textList.indexOf(file), 1);
     },
-
     async refresh({ state, dispatch }) {
       console.log("refreshing");
       dispatch("loadTexts", false);
       dispatch("loadFiles", false);
     },
-    async housekeep({ state, dispatch }) {},
+    async housekeep({ state, dispatch }) {
+      var tempTextList = [...state.textList]; // not directly changing the state
+      var tempFilesList = [...state.filesList];
+      var realTextLimit =
+        tempTextList.length -
+        [10, 20, 50, 100, 1000][
+          [0, 25, 50, 75, 100].indexOf(state.settings.txtLmt)
+        ];
+      if (realTextLimit > 0)
+        tempTextList
+          .splice(tempTextList.length - realTextLimit)
+          .forEach((item) =>
+            dispatch("deleteText", { file: item, toast: false })
+          );
+
+      var realFileLimit =
+        tempFilesList.length -
+        [10, 20, 30, 50, 1000][
+          [0, 25, 50, 75, 100].indexOf(state.settings.fileLmt)
+        ];
+      if (realFileLimit > 0)
+        tempFilesList
+          .splice(tempFilesList.length - realFileLimit)
+          .forEach((item) =>
+            dispatch("deleteFile", { file: item, toast: false })
+          );
+    },
   },
   getters: {
     timeFormatter: (state) => (arg) => {
@@ -309,7 +335,7 @@ export default new Vuex.Store({
           ", " +
           JSON.stringify(then.getDate())
         );
-      } else if (now.getDate() - then.getDate() >= 7) {
+      } else if (now.getDate() - then.getDate() > 2) {
         return (
           +JSON.stringify(then.getDate()) +
           "th, " +
