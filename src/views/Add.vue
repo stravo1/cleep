@@ -105,9 +105,10 @@ export default {
         });
       });
     }
-    document.getElementById("text_inp").focus()
+    document.getElementById("text_inp").focus();
     this.$store.dispatch("refresh");
-    this.$store.commit("setHasLoaded", true)
+    await this.$store.dispatch("syncSettings");
+    this.$store.commit("setHasLoaded", true);
   },
   computed: {},
   methods: {
@@ -155,8 +156,6 @@ export default {
 
       if (this.$store.state.isShare) {
         this.$store.dispatch("refresh");
-        await this.$store.dispatch("syncSettings");
-        this.$store.dispatch("housekeep");
         this.$store.commit("setIsShare", false);
       }
     },
