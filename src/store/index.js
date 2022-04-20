@@ -259,7 +259,6 @@ export default new Vuex.Store({
           dispatch("housekeep");
         });
       }
-      
     },
     async deleteFile({ state }, arg) {
       var file = arg.file;
@@ -292,7 +291,7 @@ export default new Vuex.Store({
       dispatch("loadFiles", false);
     },
     async housekeep({ state, dispatch }) {
-      console.log("hh")
+      console.log("hh");
       var tempTextList = [...state.textList]; // not directly changing the state
       var tempFilesList = [...state.filesList];
       var realTextLimit =
@@ -453,8 +452,15 @@ export default new Vuex.Store({
           state.fileLmt = parseInt(resp.fileLmt);
         },
         async uploadSettings({ state, dispatch, rootState }, blob) {
-          if (rootState.settingsFile != {})
-            await deleteFile(rootState.accessToken, rootState.settingsFile.id);
+          try {
+            if (rootState.settingsFile != {})
+              await deleteFile(
+                rootState.accessToken,
+                rootState.settingsFile.id
+              );
+          } catch (e) {
+            console.warn(e);
+          }
           rootState.settingsFile = await upload(
             rootState.accessToken,
             "appDataFolder",
