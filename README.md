@@ -1,4 +1,4 @@
-# <sub>![icon](public/img/icons/favicon-32x32.png)</sub> [cleep](cleep.netlify.com)
+# <sub>![icon](public/img/icons/favicon-32x32.png)</sub> [cleep](https://cleep.netlify.com)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/Stravo1/cleep) ![GitHub last commit](https://img.shields.io/github/last-commit/Stravo1/cleep) ![Website](https://img.shields.io/website?down_message=offline&up_color=green&up_message=online&url=https%3A%2F%2Fcleep.netlify.app%2F) 
 
 universal clipboard for all your devices!  
