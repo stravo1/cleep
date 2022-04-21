@@ -108,16 +108,18 @@
       </v-ons-list-item>
       <v-ons-list-header>Information</v-ons-list-header>
       <v-ons-list-item modifier="nodivider">
-        <div class="left">About</div>
+        <div class="left"><a href="https://github.com/stravo1/cleep" target="blank">About</a></div>
         <div class="right">
-          <v-ons-icon icon="ion-ios-link" />
+          <a href="https://github.com/stravo1/cleep" target="blank"><v-ons-icon icon="ion-ios-link" /></a>
         </div>
       </v-ons-list-item>
       <v-ons-list-item modifier="nodivider">
-        <div class="left">Guide</div>
-        <div class="right">
-          <v-ons-icon icon="ion-ios-link" />
-        </div>
+       
+          <div class="left"><a href="https://github.com/stravo1/cleep/wiki" target="blank"> Guide </a></div>
+          <div class="right">
+            <a href="https://github.com/stravo1/cleep/wiki" target="blank"><v-ons-icon icon="ion-ios-link" /></a> 
+          </div>
+        
       </v-ons-list-item>
     </v-ons-list>
   </v-ons-page>
@@ -200,3 +202,8 @@ export default {
   },
 };
 </script>
+<style>
+a:link {
+  text-decoration: none;
+}
+</style>
