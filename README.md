@@ -2,7 +2,8 @@
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/Stravo1/cleep) ![GitHub last commit](https://img.shields.io/github/last-commit/Stravo1/cleep) ![Website](https://img.shields.io/website?down_message=offline&up_color=green&up_message=online&url=https%3A%2F%2Fcleep.netlify.app%2F) 
 
 universal clipboard for all your devices!  
-copy, paste[^1] and share[^2] literally anything - images, audios, videos, texts, links, anything - securely and hassle-free to all your devices! access them anywehre: __all you need is a browser!__
+copy, paste[^1] and share[^2] literally anything securely and hassle-free to all your devices!  
+access them anywehre: __all you need is a browser!__
 
 highlights: 
 - share once, access anywhere!
