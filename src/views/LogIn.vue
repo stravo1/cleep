@@ -34,11 +34,35 @@
 </template>
 
 <script>
-import { gapi } from "gapi-script";
+import axios from "axios";
+
+var CLIENT_ID =
+  "202885509544-6sit8gj5j4abi5kkrh0ija74182bh3e1.apps.googleusercontent.com";
+var DISCOVERY_DOCS = [
+  "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest",
+];
+// accesses only the appData folder
+var SCOPES = "https://www.googleapis.com/auth/drive.appdata";
+
+const client = (callback) =>
+  google.accounts.oauth2.initCodeClient({
+    client_id: CLIENT_ID,
+    scope: SCOPES,
+    ux_mode: "popup",
+    prompt: "consent",
+    callback: callback,
+  });
 export default {
   methods: {
-    sIN() {
-      gapi.auth2.getAuthInstance().signIn();
+    async sIN() {
+      client(async (response) => {
+        var code = response.code;
+        var tokens = await axios.post("https://red-formula-303406.ue.r.appspot.com/auth/cleep", {
+          code,
+        });
+        localStorage.setItem("refreshToken", tokens.data.refresh_token);
+        this.$store.commit("setSignInState", true);
+      }).requestCode();
     },
   },
 };

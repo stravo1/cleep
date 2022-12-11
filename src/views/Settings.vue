@@ -108,25 +108,32 @@
       </v-ons-list-item>
       <v-ons-list-header>Information</v-ons-list-header>
       <v-ons-list-item modifier="nodivider">
-        <div class="left"><a href="https://github.com/stravo1/cleep" target="blank">About</a></div>
+        <div class="left">
+          <a href="https://github.com/stravo1/cleep" target="blank">About</a>
+        </div>
         <div class="right">
-          <a href="https://github.com/stravo1/cleep" target="blank"><v-ons-icon icon="ion-ios-link" /></a>
+          <a href="https://github.com/stravo1/cleep" target="blank"
+            ><v-ons-icon icon="ion-ios-link"
+          /></a>
         </div>
       </v-ons-list-item>
       <v-ons-list-item modifier="nodivider">
-       
-          <div class="left"><a href="https://github.com/stravo1/cleep/wiki" target="blank"> Guide </a></div>
-          <div class="right">
-            <a href="https://github.com/stravo1/cleep/wiki" target="blank"><v-ons-icon icon="ion-ios-link" /></a> 
-          </div>
-        
+        <div class="left">
+          <a href="https://github.com/stravo1/cleep/wiki" target="blank">
+            Guide
+          </a>
+        </div>
+        <div class="right">
+          <a href="https://github.com/stravo1/cleep/wiki" target="blank"
+            ><v-ons-icon icon="ion-ios-link"
+          /></a>
+        </div>
       </v-ons-list-item>
     </v-ons-list>
   </v-ons-page>
 </template>
 
 <script>
-import { gapi } from "gapi-script";
 export default {
   data() {
     return {
@@ -156,7 +163,8 @@ export default {
       localStorage.setItem("time", JSON.stringify(time));
     },
     sOUT() {
-      gapi.auth2.getAuthInstance().signOut();
+      localStorage.clear();
+      this.$store.commit("setSignInState", false);
     },
 
     handleBackClick() {

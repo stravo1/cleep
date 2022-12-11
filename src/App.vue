@@ -13,15 +13,6 @@
 import Home from "./views/Home.vue";
 import Add from "./views/Add.vue";
 import LogIn from "./views/LogIn.vue";
-import { gapi } from "gapi-script";
-
-var CLIENT_ID =
-  "202885509544-6sit8gj5j4abi5kkrh0ija74182bh3e1.apps.googleusercontent.com";
-var DISCOVERY_DOCS = [
-  "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest",
-];
-// accesses only the appData folder
-var SCOPES = "https://www.googleapis.com/auth/drive.appdata";
 
 export default {
   data() {
@@ -44,35 +35,25 @@ export default {
     };
   },
   mounted() {
-    var callback = this.signInStateUpdate;
     this.$store.commit("setLoading", true);
     this.$store.commit("setToast", this.$ons.notification.toast);
-    gapi.load("client:auth2", function () {
-      ////console.log(108)
-      gapi.client
-        .init({
-          clientId: CLIENT_ID,
-          discoveryDocs: DISCOVERY_DOCS,
-          scope: SCOPES,
-        })
-        .then(
-          function () {
-            // Listen for sign-in state changes.
-            gapi.auth2.getAuthInstance().isSignedIn.listen(callback);
-            // Handle the initial sign-in state.
-            callback(gapi.auth2.getAuthInstance().isSignedIn.get());
-          },
-          function (error) {
-            window.alert(JSON.stringify(error, null, 2));
-          }
-        );
-    });
+    if (localStorage.getItem("refreshToken")) {
+      this.signInStateUpdate(true);
+    } else {
+      this.signInStateUpdate(false);
+    }
   },
   data() {
     return {
       loginPushed: false,
       isShare: false,
+      signInState: this.$store.state.signInState,
     };
+  },
+  watch: {
+    "$store.state.signInState": function (newState, oldState) {
+      this.signInStateUpdate(newState);
+    },
   },
   computed: {
     pageStack() {
@@ -91,10 +72,10 @@ export default {
     },
     async signInStateUpdate(arg) {
       ////console.log("Signed In?", arg)
-      this.$store.commit("setLoading", false);
 
       this.$store.commit("setSignInState", arg);
       if (!this.$store.state.signInState) {
+        this.$store.commit("setLoading", false);
         this.$store.commit("navigator/push", LogIn);
         this.loginPushed = true;
         return;
@@ -104,11 +85,8 @@ export default {
           this.$store.commit("navigator/pop");
           this.loginPushed = false;
         }
-        this.$store.commit(
-          "setAccessToken",
-          gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse()
-            .access_token
-        );
+        await this.$store.dispatch("getNewToken");
+        this.$store.commit("setLoading", false);
 
         await this.checkShare();
         await this.$store.dispatch("checkInstall");
@@ -134,15 +112,11 @@ export default {
           lst.push(member);
           trigger.delete(member);
         });
-       if (lst.length) {
-        this.isShare = true
-        this.$store.commit("setIsShare", true)
-        
-      }
+        if (lst.length) {
+          this.isShare = true;
+          this.$store.commit("setIsShare", true);
+        }
       });
-      
-      
-      
     },
   },
 };

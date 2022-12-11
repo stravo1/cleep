@@ -1,5 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import axios from "axios";
+
 import {
   createFolder,
   searchFiles,
@@ -102,6 +104,17 @@ export default new Vuex.Store({
     },
   },
   actions: {
+    async getNewToken({ state }) {
+      var refreshToken = localStorage.getItem("refreshToken");
+      var res = await axios.post(
+        "https://red-formula-303406.ue.r.appspot.com/auth/cleep/refresh-token",
+        {
+          refreshToken,
+        }
+      );
+      localStorage.setItem("accessToken", res.data.access_token);
+      state.accessToken = res.data.access_token;
+    },
     async checkInstall({ state, dispatch }) {
       state.isLoading = true;
       var initialFiles = await searchFiles({
