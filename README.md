@@ -3,15 +3,15 @@
 
 universal clipboard for all your devices!  
 copy, paste[^1] and share[^2] literally anything securely and hassle-free to all your devices!  
-access them anywehre: __all you need is a browser!__
+access them anywhere: __all you need is a browser!__
 
-highlights: 
+#### highlights: 
 - share once, access anywhere!
 - automatically deletes older texts and files.
 - classic iOS theme :)
 
 
-[User guide](https://github.com/stravo1/cleep/wiki)
+#### [User guide](https://github.com/stravo1/cleep/wiki)
 
 #### Dependencies:
 > - VueJS with OnsesnUI for UI.
