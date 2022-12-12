@@ -100,10 +100,12 @@ export default {
     var content = await this.$store.dispatch("getContent", this.file);
     this.loaded = true;
     content.text().then((text) => (this.text = text));
+    /*
     var dg = this.$ons.GestureDetector(document.getElementById("123"));
     dg.on("hold", function (event) {
       alert("longpress");
     });
+    */
   },
   props: ["file"],
   components: {
